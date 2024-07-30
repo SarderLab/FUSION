@@ -8,9 +8,9 @@ RUN apt-get update && \
     apt-get install -y git && \
     apt-get clean
 
-ENV DSA_URL='http://ec2-3-230-122-132.compute-1.amazonaws.com:8080/api/v1/'
-ENV DSA_USER='fusionguest'
-ENV DSA_PWORD='Fus3yWasHere'
+ENV DSA_URL='https://dsa.rc.ufl.edu'
+ENV DSA_USER='suhas'
+ENV DSA_PWORD='suhaspassword'
 
 WORKDIR /
 
@@ -21,7 +21,7 @@ WORKDIR /FUSION
 RUN python3 -m pip install -r requirements.txt --no-cache-dir
 RUN python3 -m pip freeze > pip_installed_packages.txt
 
-EXPOSE 8000
+EXPOSE 8201
 
 ENTRYPOINT [ "python3" ]
 CMD ["FUSION_Main.py"]
