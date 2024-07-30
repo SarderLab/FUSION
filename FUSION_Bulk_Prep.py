@@ -44,7 +44,7 @@ class BulkProcessApp:
 
         self.bulk_callbacks()
 
-        self.app.run_server(host = '0.0.0.0', debug = False, use_reloader=False,port=8000)
+        self.app.run_server(host = '0.0.0.0', debug = False, use_reloader=False,port=8202)
     
     def bulk_callbacks(self):
 
