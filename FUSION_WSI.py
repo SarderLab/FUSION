@@ -28,6 +28,7 @@ from FUSION_Utils import (
     gen_violin_plot,
     gen_umap)
 
+os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
 class DSASlide:
 
     spatial_omics_type = 'Regular'
