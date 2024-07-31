@@ -66,7 +66,7 @@ from upload_component import UploadComponent
 
 from waitress import serve
 
-
+os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
 class FUSION:
     def __init__(self,
                 app,
