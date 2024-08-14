@@ -4332,9 +4332,9 @@ class GirderHandler:
             return pd.DataFrame()
 
     def save_to_user_folder(self,save_object, user_info, output_path = None):
-
-        if not os.path.exists('/tmp'):
-            os.makedirs('/tmp')
+        tmp_dir = os.getenv('FUSION_TMPDIR')
+        # if not os.path.exists('/tmp'):
+        #     os.makedirs('/tmp')
 
         if output_path is None:
             output_path = f'/user/{user_info["login"]}/Public'
@@ -4348,19 +4348,19 @@ class GirderHandler:
 
         # Saving dataframe
         if 'csv' in save_object['filename']:
-            save_object['content'].to_csv(f'/tmp/{save_object["filename"]}')
+            save_object['content'].to_csv(f'{tmp_dir}/{save_object["filename"]}')
 
         elif 'xlsx' in save_object['filename']:
-            with pd.ExcelWriter(f'/tmp/{save_object["filename"]}') as writer:
+            with pd.ExcelWriter(f'{tmp_dir}/{save_object["filename"]}') as writer:
                 save_object['content'].to_excel(writer,engine='openpyxl')
         
         elif 'png' in save_object['filename'] or 'tiff' in save_object['filename']:
             if 'png' in save_object['filename']:
                 # Should be a PIL.Image object
-                Image.fromarray(save_object['content']).save(f'/tmp/{save_object["filename"]}')
+                Image.fromarray(save_object['content']).save(f'{tmp_dir}/{save_object["filename"]}')
             elif 'tiff' in save_object['filename']:
                 tifffile.imwrite(
-                    f'/tmp/{save_object["filename"]}',
+                    f'{tmp_dir}/{save_object["filename"]}',
                     save_object['content'],
                     shape = save_object['content'].shape,
                     metadata={'axes':'YXC'}
@@ -4369,7 +4369,7 @@ class GirderHandler:
         print(f'Uploading: {save_object["filename"]} to {output_path_id}')
         upload_file_response = self.gc.uploadFileToFolder(
             folderId = output_path_id,
-            filepath = f'/tmp/{save_object["filename"]}'
+            filepath = f'{tmp_dir}/{save_object["filename"]}'
         )
 
         # Adding metadata to uploaded object

@@ -53,23 +53,23 @@ class Prepper:
         # Dictionary containing model and item id's
         self.model_zoo = {
             'MultiCompartment_Model':{
-                'plugin_name':'samborder2256_multicomp_latest/MultiCompartmentSegment',
-                'model_id':'648123761019450486d13dce',
+                'plugin_name':'samsam92_compreps_testupload/MultiCompartmentSegment',
+                'model_id':'66a2a487277ffd2948ea12f5',
                 'structures':['Cortical interstitium','Medullary interstitium','Glomeruli','Sclerotic Glomeruli','Tubules','Arteries and Arterioles']
             },
             'IFTA_Model':{
-                'plugin_name':'dpraveen511_ifta_ifta_seg_aws_1/IFTASegmentation',
-                'model_id':'64c9422a287cfdce1e9c2530',
+                'plugin_name':'sayatmimar_deployment_test_ifta-hpg/IFTASegmentation',
+                'model_id':'66a2a46c277ffd2948ea12db',
                 'structures':['IFTA']
             },
             'PTC_Model':{
-                'plugin_name':'dpraveen511_ptc_ptc_seg_aws_1/PTCSegmentation',
-                'model_id':'64b5d4ec5fd253763e671721',
+                'plugin_name':'sayatmimar_deployment_test_ptc-hpg/PTCSegmentation',
+                'model_id':'66a2a499277ffd2948ea1315',
                 'structures':['PTC']
             }
         }
 
-        self.feature_extraction_plugin = 'samborder2256_ftx_plugin_latest/Ftx_sc'
+        self.feature_extraction_plugin = 'suhaskc_ftx_plugin_latest/Ftx_sc'
 
         self.color_map = colormaps['jet']
 
@@ -678,16 +678,16 @@ class VisiumPrep(Prepper):
 
         # Info for spot annotation plugin
         self.spot_annotation_info = {
-            'definitions_file':'64fa0f782d82d04be3e5daa3',
-            'plugin_name':'samborder2256_spot_annotation_latest/SpotAnnotation'
+            'definitions_file':'66bba62bce4899086bf5a277',
+            'plugin_name':'suhaskc_spot_annotation_latest/SpotAnnotation'
         }
 
         self.cell_deconvolution_plugin = {
             'plugin_name':'sayatmimar_atlasrds_t_7/AtlasRDSCSV',
-            'atlas':'65159ea82d82d04be3e73f0a'
+            'atlas':'66bba76cce4899086bf5a27b'
         }
 
-        self.spot_aggregation_plugin = 'samborder2256_spot_aggregation_latest/spot_agg'
+        self.spot_aggregation_plugin = 'suhaskc_spot_aggregation_latest/spot_agg'
 
     def run_spot_aggregation(self,image_id, user_details):
         
@@ -857,7 +857,7 @@ class CODEXPrep(Prepper):
 
         # Registration plugin
         self.registration_plugin = {
-            'plugin_name': 'dsarchive_histomicstk_extras_latest/RegisterImage'
+            'plugin_name': 'suhaskc_histomicstk_extras_latest/RegisterImage'
         }
 
         # DeepCell plugin (with post-processing and feature extraction)
