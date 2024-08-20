@@ -9,8 +9,8 @@ RUN apt-get update && \
     apt-get clean
 
 ENV DSA_URL='https://dsa.rc.ufl.edu/api/v1/'
-ENV DSA_USER='suhas'
-ENV DSA_PWORD='suhaspassword'
+ENV DSA_USER='fusionguest'
+ENV DSA_PWORD='fussywashere'
 
 WORKDIR /
 
