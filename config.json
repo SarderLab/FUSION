@@ -1,0 +1,9 @@
+{
+    "plugins":{
+        "MultiCompartment_Model":{
+            "plugin_name":"samsam92_compreps_testupload/MultiCompartmentSegment",
+            "model_id":"66a2a487277ffd2948ea12f5",
+            "structures": ["Cortical interstitium","Medullary interstitium","Glomeruli","Sclerotic Glomeruli","Tubules","Arteries and Arterioles"]
+        }
+    }
+}
