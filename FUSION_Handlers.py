@@ -60,7 +60,7 @@ from typing_extensions import Union
 from scipy import stats
 from sklearn.metrics import silhouette_score, silhouette_samples
 
-os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
+#os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
 class LayoutHandler:
     def __init__(self,
                  verbose = False):
