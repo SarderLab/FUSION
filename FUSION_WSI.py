@@ -36,7 +36,7 @@ from FUSION_Utils import (
 
 #NOTE: All spatial indices will be in (x,y)/(row,column)/(horizontal,vertical)/(width,height) format for consistency
 
-#os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
+os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
 class SlideHandler:
     """
     More generalized handler for slide-related methods. Takes slide_info_store as input into most
