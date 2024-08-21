@@ -66,7 +66,7 @@ from upload_component import UploadComponent
 
 from waitress import serve
 
-os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
+#os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
 class FUSION:
     def __init__(self,
                 app,
@@ -4898,7 +4898,7 @@ class FUSION:
                 'WSI': False
             }
             user_data_store['upload_type'] = 'Regular'
-
+            print(f'girderToken={user_data_store["token"]}\nparentId={parentId}\nbaseURL={self.dataset_handler.apiUrl}')
             upload_reqs = html.Div([
                 dbc.Row([
                     html.Div(

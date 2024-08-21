@@ -31,7 +31,7 @@ class BulkProcessApp:
                  dataset_handler,
                  prep_handler,
                  ):
-        os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION/')
+        #os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION/')
         self.app = app
         self.app.layout = layout
         self.app.title = "Bulk Preprocessing App"

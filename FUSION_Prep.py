@@ -44,7 +44,7 @@ from io import StringIO, BytesIO
 
 #TODO: Remove some default settings
 # sub-compartment segmentation and feature extraction should vary
-os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
+#os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
 class Prepper:
     def __init__(self, girder_handler):
 
