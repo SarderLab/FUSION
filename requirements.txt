@@ -26,3 +26,5 @@ umap_learn==0.5.4
 upload_component==0.0.5
 waitress==2.1.2
 wsi_annotations_kit==1.4.9
+geopandas==0.14.3
+dash_breakpoints==0.1.0
