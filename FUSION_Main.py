@@ -8231,8 +8231,8 @@ def app(*args):
     except:
         # Can be one or more items
         default_items = [
-            '6495a4e03e6ae3107da10dc5',
-            '6495a4df3e6ae3107da10dc2'
+            '66a933ca86a5c03d700be834',
+            '66a933c086a5c03d700bd9d9'
         ]
     
     default_item_info = [dataset_handler.get_item_info(i) for i in default_items]
