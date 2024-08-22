@@ -235,8 +235,7 @@ class Prepper:
                                                 parameters={
                                                     'girderApiUrl':self.girder_handler.apiUrl,
                                                     'girderToken':self.girder_handler.user_token,
-                                                    'files':file_id,
-                                                    'base_dir':folder_id,
+                                                    'input_file':file_id,
                                                     'modelfile':self.model_zoo[model]['model_id']
                                                 })
                     job_responses.append(job_response)
