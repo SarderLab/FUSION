@@ -8,7 +8,7 @@ RUN apt-get update && \
     apt-get install -y git && \
     apt-get clean
 
-ENV DSA_URL='http://ec2-3-230-122-132.compute-1.amazonaws.com:8080/api/v1/'
+ENV DSA_URL='http://0.0.0.0:8101/api/v1'
 ENV DSA_USER='fusionguest'
 ENV DSA_PWORD='Fus3yWasHere'
 
