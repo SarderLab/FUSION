@@ -6239,7 +6239,7 @@ class FUSION:
         if ctx.triggered_id is None:
             raise exceptions.PreventUpdate
         
-        if not ctx.triggered['value']:
+        if not ctx.triggered[0]['value']:
             raise exceptions.PreventUpdate
 
         if ctx.triggered_id['type']=='start-feat':
