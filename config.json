@@ -1,9 +1,25 @@
 {
-    "plugins":{
+    "plugin_configs":{
         "MultiCompartment_Model":{
             "plugin_name":"samsam92_compreps_testupload/MultiCompartmentSegment",
             "model_id":"66a2a487277ffd2948ea12f5",
             "structures": ["Cortical interstitium","Medullary interstitium","Glomeruli","Sclerotic Glomeruli","Tubules","Arteries and Arterioles"]
+        },
+        "IFTA_Model":{
+            "plugin_name":"sayatmimar_deployment_test_ifta-hpg/IFTASegmentation",
+            "model_id":"66a2a46c277ffd2948ea12db",
+            "structures":["IFTA"]
+        },
+        "PTC_Model":{
+            "plugin_name":"sayatmimar_deployment_test_ptc-hpg/PTCSegmentation",
+            "model_id":"66a2a499277ffd2948ea1315",
+            "structures":["PTC"]
         }
+    },
+    "plugin_names":{
+        "feature_extraction_plugin":"suhaskc_ftx_plugin_latest/Ftx_sc",
+        "MultiCompartment_Model":"samsam92_compreps_testupload/MultiCompartmentSegment"
+
     }
+
 }
