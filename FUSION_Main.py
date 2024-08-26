@@ -5,18 +5,13 @@ Whole Slide Image heatmap generation and viewer for specific cell types using Gr
 """
 
 import os
-import sys
 import pandas as pd
 import numpy as np
 import json
 
-from PIL import Image
-from io import BytesIO
 from datetime import datetime
 
 import threading
-
-from tqdm import tqdm
 
 import shapely
 from shapely.geometry import Point, shape, box
@@ -25,7 +20,6 @@ import random
 
 from umap.umap_ import UMAP
 
-from uuid import uuid4
 import textwrap
 
 import girder_client
@@ -42,7 +36,7 @@ from dash import dcc, ctx, MATCH, ALL, Patch, dash_table, exceptions, callback_c
 import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
-from dash_extensions.javascript import assign, arrow_function
+from dash_extensions.javascript import Namespace
 from dash_extensions.enrich import DashProxy, html, Input, Output, MultiplexerTransform, State
 import dash_mantine_components as dmc
 import dash_treeview_antd as dta
@@ -66,7 +60,7 @@ from upload_component import UploadComponent
 
 from waitress import serve
 
-os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
+#os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION')
 class FUSION:
     def __init__(self,
                 app,
@@ -172,161 +166,14 @@ class FUSION:
         self.color_map = colormaps['jet']
 
         # JavaScript functions for controlling annotation properties
-        self.ftu_style_handle = assign("""function(feature,context){
-            const {color_key,overlay_prop,fillOpacity,ftu_colors,filter_vals} = context.hideout;
-                                       
-            var overlay_value = Number.Nan;
-            if (overlay_prop && "user" in feature.properties) {
-                if (overlay_prop.name) {
-                    if (overlay_prop.name in feature.properties.user) {
-                        if (overlay_prop.value) {
-                            if (overlay_prop.value in feature.properties.user[overlay_prop.name]) {
-                                if (overlay_prop.sub_value) {
-                                    if (overlay_prop.sub_value in feature.properties.user[overlay_prop.name][overlay_prop.value]) {
-                                        var overlay_value = feature.properties.user[overlay_prop.name][overlay_prop.value][overlay_prop.sub_value];
-                                    } else {
-                                        var overlay_value = Number.Nan;
-                                    }
-                                } else {
-                                    // TODO: Might have to do something here for non-aggregated String props
-                                    var overlay_value = feature.properties.user[overlay_prop.name][overlay_prop.value];
-                                }
-                            } else if (overlay_prop.value==="max") {
-                                // Finding max represented sub-value
-                                var overlay_value = Number.Nan;
-                                var test_value = 0.0;
-                                for (var key in feature.properties.user[overlay_prop.name]) {
-                                    var tester = feature.properties.user[overlay_prop.name][key];
-                                    if (tester > test_value) {
-                                        test_value = tester;
-                                        overlay_value = key;
-                                    }
-                                } 
-                            } else {
-                                var overlay_value = Number.Nan;
-                            }
-                        } else {
-                            var overlay_value = feature.properties.user[overlay_prop.name];
-                        }
-                    } else {
-                        var overlay_value = Number.Nan;
-                    }
-                } else {
-                    var overlay_value = Number.Nan;
-                }
-            } else {
-                var overlay_value = Number.Nan;
-            }
-                                       
-            var style = {};
-            if (overlay_value == overlay_value) {
-                if (overlay_value in color_key) {
-                    const fillColor = color_key[overlay_value];
-                    style.fillColor = fillColor;
-                    style.fillOpacity = fillOpacity;        
-                } else if (Number(overlay_value).toFixed(1) in color_key) {
-                    const fillColor = color_key[Number(overlay_value).toFixed(1)];
-                    style.fillColor = fillColor;
-                    style.fillOpacity = fillOpacity;
-                }
-                                                                              
-                if (feature.properties.name in ftu_colors){
-                    style.color = ftu_colors[feature.properties.name];
-                } else {
-                    style.color = 'white';
-                }
+        ns = Namespace("dashExtensions","default")
+        
+        self.ftu_style_handle = ns("ftu_style_handle")
 
-            } else {
-                if (feature.properties.name in ftu_colors){
-                    style.color = ftu_colors[feature.properties.name];
-                } else {
-                    style.color = 'white';
-                }
-                style.fillColor = "f00";
-            }           
-                                                                              
-            return style;
-        }
-            """
-        )
+        self.ftu_filter = ns("ftu_filter")
 
-        self.ftu_filter = assign("""function(feature,context){
-                const {color_key,overlay_prop,fillOpacity,ftu_colors,filter_vals} = context.hideout;
-                var return_feature = true;               
-                if (filter_vals){
-                    // If there are filters, use them
-                    for (let i = 0; i < filter_vals.length; i++) {
-                        // Iterating through filter_vals dict
-                        var filter = filter_vals[i];         
-                                                
-                        if (filter.name) {
-                            // Checking if the filter name is in the feature
-                            if (filter.name in feature.properties.user) {
-                                
-                                if (filter.value) {
-                                    if (filter.value in feature.properties.user[filter.name]) {
-                                        if (filter.sub_value) {
-                                            if (filter.sub_value in feature.properties.user[filter.name][filter.value]) {
-                                                var test_val = feature.properties.user[filter.name][filter.value][filter.sub_value];
-                                            } else {
-                                                return_feature = return_feature & false;
-                                            }
-                                        } else {
-                                            // TODO: Might have to do something here for non-aggregated String props
-                                            var test_val = feature.properties.user[filter.name][filter.value];
-                                        }
-                                    } else if (filter.value==="max") {
-                                        return_feature = return_feature & true;
-                                    } else {
-                                        return_feature = return_feature & false;
-                                    }
-                                } else {
-                                    var test_val = feature.properties.user[filter.name];
-                                }
-                            } else {
-                                return_feature = return_feature & false;
-                            }
-                        }
-                                 
-                        if (filter.range) {
-                            if (typeof filter.range[0]==='number') {
-                                if (test_val < filter.range[0]) {
-                                    return_feature = return_feature & false;
-                                }
-                                if (test_val > filter.range[1]) {
-                                    return_feature = return_feature & false;
-                                }   
-                            } else {
-                                if (filter.range.includes(return_feature)) {
-                                    return_feature = return_feature & true;
-                                } else {
-                                    return_feature = return_feature & false;
-                                }
-                            }
-                        }
-                    }
-                    
-                    return return_feature;
-                                 
-                } else {
-                    // If no filters are provided, return true for everything.
-                    return return_feature;
-                }
-            }
-            """
-        )
-
-        self.render_marker_handle = assign("""function(feature,latlng,context){
-            const p = feature.properties;
-            if (p.type === 'marker') {
-                return L.marker(latlng);
-            } else {
-                return true;
-            }
-        }
-        """)
-
-
+        self.render_marker_handle = ns("render_marker_handle")
+        
         # Adding callbacks to app
         self.ga_callbacks()
         self.vis_callbacks()

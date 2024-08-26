@@ -8,10 +8,7 @@ These should already have multi-compartment segmentation run and should have spo
 """
 
 import os
-import sys
 import json
-import girder_client
-import time
 
 import plotly.graph_objects as go
 import plotly.express as px
@@ -31,7 +28,7 @@ class BulkProcessApp:
                  dataset_handler,
                  prep_handler,
                  ):
-        os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION/')
+        #os.chdir('/home/rc-svc-pinaki.sarder-web/fusion/FUSION/')
         self.app = app
         self.app.layout = layout
         self.app.title = "Bulk Preprocessing App"

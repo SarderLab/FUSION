@@ -6,7 +6,7 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
         function1: function(e, ctx) {
             console.log(`Clicked coordinates: ${e.latlng}, map center: ${ctx.map.getCenter()}`);
         },
-        function2: function(feature, context) {
+        ftu_style_handle: function(feature, context) {
                 const {
                     color_key,
                     overlay_prop,
@@ -89,7 +89,7 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
             }
 
             ,
-        function3: function(feature, context) {
+        ftu_filter: function(feature, context) {
                 const {
                     color_key,
                     overlay_prop,
@@ -160,7 +160,7 @@ window.dashExtensions = Object.assign({}, window.dashExtensions, {
             }
 
             ,
-        function4: function(feature, latlng, context) {
+        render_marker_handle: function(feature, latlng, context) {
             const p = feature.properties;
             if (p.type === 'marker') {
                 return L.marker(latlng);
