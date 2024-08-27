@@ -136,7 +136,7 @@ class FUSION:
         self.color_map = colormaps['jet']
 
         # JavaScript functions for controlling annotation properties
-        ns = Namespace("dashExtensions","default")
+        ns = Namespace("fusion_js","annotation")
         
         self.ftu_style_handle = ns("ftu_style_handle")
 
