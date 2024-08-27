@@ -4,8 +4,6 @@ Various utility functions used in FUSION
 
 """
 
-import os
-import sys
 import numpy as np
 
 import pandas as pd
@@ -22,7 +20,7 @@ from scipy import ndimage
 
 from sklearn.cluster import DBSCAN
 from typing_extensions import Union
-
+import json
 from umap import UMAP
 
 def get_pattern_matching_value(input_val):
@@ -314,5 +312,20 @@ def make_marker_geojson(bbox_list:list,prop_list:Union[list,dict,None]):
 
     return marker_geojson, marker_list
 
+#This function is used to load the Google Tag Manager code from a file and return it as a string. 
+def load_google_tag(file_path:str):
+    try:
+        with open(file_path, 'r') as file:
+            return file.read()
+    except Exception as e:
+        print(f'Error loading Google Tag Manager code: {e}')
 
-
+def load_default_slide_list():
+    try:
+        with open('./configs/app_config.json','r') as file:
+            app_configs = json.load(file)
+            return app_configs['default_slide_list']
+    except Exception as e:
+        print(f'Error loading app configs: {e}')
+        return []
+        

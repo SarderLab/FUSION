@@ -37,24 +37,22 @@ import dash_bootstrap_components as dbc
 import dash_leaflet as dl
 import dash_leaflet.express as dlx
 from dash_extensions.javascript import Namespace
-from dash_extensions.enrich import DashProxy, html, Input, Output, MultiplexerTransform, State
+from dash_extensions.enrich import html, Input, Output, State
 import dash_mantine_components as dmc
 import dash_treeview_antd as dta
 
 from timeit import default_timer as timer
 import time
 
-#from FUSION_WSI import DSASlide, VisiumSlide, CODEXSlide, XeniumSlide
 from FUSION_WSI import SlideHandler
-from FUSION_Handlers import LayoutHandler, DownloadHandler, GirderHandler, GeneHandler
+from FUSION_Handlers import GeneHandler
 from FUSION_Prep import XeniumPrep, CODEXPrep, VisiumPrep, Prepper
 from FUSION_Utils import (
-    get_pattern_matching_value, extract_overlay_value, 
+    get_pattern_matching_value, load_google_tag,
     gen_umap,
     gen_violin_plot, process_filters,
     path_to_mask,
-    make_marker_geojson,
-    gen_clusters)
+    make_marker_geojson)
 
 from upload_component import UploadComponent
 
@@ -92,35 +90,7 @@ class FUSION:
         self.app.validation_layout = html.Div(self.layout_handler.validation_layout)
         
         # Setup GoogleTag for event tracking
-        self.app.index_string = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <!-- Google Tag Manager -->
-                <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                })(window,document,'script','dataLayer','GTM-WWS4Q54M');</script>
-            <!-- End Google Tag Manager -->
-            <title>{%title%}</title>
-            {%favicon%}
-            {%css%}
-        </head>
-        <body>
-            <!-- Google Tag Manager (noscript) -->
-                <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WWS4Q54M"
-                height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-                <!-- End Google Tag Manager (noscript) -->
-            <!-- End Google Tag Manager (noscript) -->
-            {%app_entry%}
-        <footer>
-            {%config%}
-            {%scripts%}
-            {%renderer%}
-        </footer>
-        </body>
-        </html>"""
+        self.app.index_string = load_google_tag('./assets/google_tracking.html')
 
         # clustering related properties (and also cell types, cell states, image_ids, etc.)
         self.cell_graphics_key = self.dataset_handler.cell_graphics_key
@@ -8044,110 +8014,3 @@ class FUSION:
                 modal_open = [False]
 
         return download_data, interval_disable, modal_open, modal_div_children
-
-
-
-
-
-
-
-def app(*args):
-    
-    # Using DSA as base directory for storage and accessing files
-    dsa_url = os.environ.get('DSA_URL')
-    try:
-        username = os.environ.get('DSA_USER')
-        p_word = os.environ.get('DSA_PWORD')
-    except:
-        username = ''
-        p_word = ''
-        print(f'Be sure to set an initial user dummy!')
-
-    # Initializing GirderHandler
-    dataset_handler = GirderHandler(
-        apiUrl=dsa_url,
-        username=username,
-        password=p_word
-    )
-    initial_user_info = dataset_handler.user_details
-
-    # Initial collection: can be specified as a single or multiple collections which will automatically be loaded into the visualization session
-    try:
-        default_items = os.environ.get('FUSION_INITIAL_ITEMS')
-        default_items = default_items.split(',')
-    except:
-        # Can be one or more items
-        default_items = [
-            '66a933ca86a5c03d700be834',
-            '66a933c086a5c03d700bd9d9'
-        ]
-    
-    default_item_info = [dataset_handler.get_item_info(i) for i in default_items]
-
-    # Saving & organizing relevant id's in GirderHandler
-    print('Getting initial items metadata')
-    dataset_handler.set_default_slides(default_item_info)
-
-    # Going through fusion_configs.json, adding plugins to Prepper, initializing user studies
-    # Step 1: Check for presence of required plugins
-    # Step 2: Pull missing ones specified in fusion_configs.json
-    # Step 3: If any user studies are specified:
-    #   Step 3a: Create a collection called "FUSION User Studies"
-    #   Step 3b: Create a separate item for each study containing a JSON file with questions, admins, and users (with user_type, name, and responses)
-    #   Step 3c: Create a new group for each user study and add users who already have accounts to that group to enable edit access to responses file
-    #   Step 3d: Specify location of associated study materials (if we want to continue to host those on FUSION (PowerPoint slides, etc.))
-
-    # Getting usability study information
-    #TODO: Generalize for other types of user studies
-    print(f'Getting asset items')
-    assets_path = '/collection/FUSION Assets/'
-    dataset_handler.get_asset_items(assets_path)
-
-    # Getting the slide data for DSASlide()
-    slide_names = [
-        {'label': i['name'],'value':i['_id']}
-        for i in default_item_info
-    ]
-
-    # Required for Dash layouts, themes, and icons
-    external_stylesheets = [
-        dbc.themes.LUX,
-        dbc.themes.BOOTSTRAP,
-        dbc.icons.BOOTSTRAP,
-        dbc.icons.FONT_AWESOME
-        ]
-
-    # Initializing slide datasets with public collections (edge parent folders of image items) and user upload folders
-    slide_dataset = dataset_handler.update_slide_datasets(initial_user_info)
-
-    print(f'Generating layouts')
-    layout_handler = LayoutHandler()
-    layout_handler.gen_initial_layout(slide_names,initial_user_info,dataset_handler.default_slides, slide_dataset)
-    layout_handler.gen_vis_layout(GeneHandler(),None)
-    layout_handler.gen_builder_layout(dataset_handler,initial_user_info, None)
-    layout_handler.gen_uploader_layout()
-
-    download_handler = DownloadHandler(dataset_handler)
-
-    prep_handler = Prepper(dataset_handler)
-    
-    print('Ready to rumble!')
-    main_app = DashProxy(
-        __name__,
-        external_stylesheets=external_stylesheets,
-        transforms = [MultiplexerTransform()]
-    )
-    
-    # Passing main handlers to application object
-    vis_app = FUSION(
-        main_app,
-        layout_handler,
-        dataset_handler,
-        download_handler,
-        prep_handler
-    )
-
-
-if __name__=='__main__':
-    #TODO: Can add path to configs here as an input argument
-    app()
